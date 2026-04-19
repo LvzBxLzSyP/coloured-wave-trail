@@ -24,8 +24,7 @@ $on_mod(Loaded) {
     auto mm = ModManager::sharedState();
     mm->load();
     
-    // 修正 1: 將 (key, setting) 改為 (setting)
-    // 提示：在 V3 中，SettingChangedEvent 的 Lambda 只接收一個 std::shared_ptr<SettingV3>
+    // 個別設定監聽：當特定 Key 改變時更新 ModManager 的緩存值
     
     SettingChangedEvent(Mod::get(), "colour").listen([mm](auto setting) {
         mm->m_color1 = Mod::get()->getSettingValue<ccColor3B>("colour");
@@ -55,9 +54,9 @@ $on_mod(Loaded) {
         mm->m_solid = Mod::get()->getSettingValue<bool>("solid");
     }).leak();
 
-    // 修正 2: 監聽整個 Mod 的設定變動
-    // 在 V3 中，監聽整個 Mod 的變動不使用 SettingChangedEvent(Mod::get())，而是用專屬函式
-    listenForSettingChanges([mm](auto setting) {
+    // 全域設定監聽：當該 Mod 的「任何」設定改變時，立即更新遊戲內的玩家拖尾效果
+    // 注意：在 V3 中，SettingChangedEvent(Mod*) 是監聽全域變動的正確方式
+    SettingChangedEvent(Mod::get()).listen([mm](auto setting) {
         if(!PlayLayer::get())
             return;
 
@@ -68,5 +67,5 @@ $on_mod(Loaded) {
             p1->updateStreak();
             p2->updateStreak();
         }
-    });
+    }).leak();
 }
