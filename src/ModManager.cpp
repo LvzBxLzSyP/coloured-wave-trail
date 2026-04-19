@@ -25,33 +25,33 @@ $on_mod(Loaded) {
     auto mm = ModManager::sharedState();
     mm->load();
     
-    listenForSettingChanges("colour", [mm](ccColor3B val) {
+    SettingChangedEvent("colour").listen([mm](ccColor3B val) {
         mm->m_color1 = val;
-    });
+    }).leak();
     
-    listenForSettingChanges("colour2", [mm](ccColor3B val) {
+    SettingChangedEvent("colour2").listen([mm](ccColor3B val) {
         mm->m_color2 = val;
-    });
+    }).leak();
     
-    listenForSettingChanges("colour1Enabled", [mm](bool val) {
+    SettingChangedEvent("colour1Enabled").listen([mm](bool val) {
         mm->m_color1Enabled = val;
-    });
+    }).leak();
     
-    listenForSettingChanges("colour2Enabled", [mm](bool val) {
+    SettingChangedEvent("colour2Enabled").listen([mm](bool val) {
         mm->m_color2Enabled = val;
-    });
+    }).leak();
     
-    listenForSettingChanges("noWave", [mm](bool val) {
+    SettingChangedEvent("noWave").listen([mm](bool val) {
         mm->m_noWave = val;
-    });
+    }).leak();
     
-    listenForSettingChanges("noDefaultTrail", [mm](bool val) {
+    SettingChangedEvent("noDefaultTrail").listen([mm](bool val) {
         mm->m_noDefaultTrail = val;
-    });
+    }).leak();
     
-    listenForSettingChanges("solid", [mm](bool val) {
+    SettingChangedEvent("solid").listen([mm](bool val) {
         mm->m_solid = val;
-    });
+    }).leak();
 
     listenForAllSettingChanges([](std::shared_ptr<SettingV3> setting) {
         if(!PlayLayer::get())
