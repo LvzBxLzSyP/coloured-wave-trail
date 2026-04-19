@@ -24,8 +24,7 @@ $on_mod(Loaded) {
     auto mm = ModManager::sharedState();
     mm->load();
     
-    // 1. 個別設定監聽：更新緩存值
-    // 在 V3 中，SettingChangedEvent 必須有兩個參數：Mod 和 Key
+    // --- 個別設定監聽 ---
     
     SettingChangedEvent(Mod::get(), "colour").listen([mm](auto setting) {
         mm->m_color1 = Mod::get()->getSettingValue<ccColor3B>("colour");
@@ -55,10 +54,10 @@ $on_mod(Loaded) {
         mm->m_solid = Mod::get()->getSettingValue<bool>("solid");
     }).leak();
 
-    // 2. 全域設定監聽：處理拖尾更新
-    // 修正：listenForSettingChanges 的第一個參數傳入空字串 "" 
-    // 這代表監聽該 Mod 下「任何」Key 的變動。
-    listenForSettingChanges("", [mm](auto setting) {
+    // --- 全域設定監聽 ---
+    // 修正：手動呼叫 SettingChangedEventV3 的構造函數
+    // 傳入 "" 作為 key，代表不篩選特定設定，從而監聽該 Mod 的所有變動
+    SettingChangedEvent(Mod::get(), "").listen([mm](auto setting) {
         if(!PlayLayer::get())
             return;
 
@@ -69,5 +68,5 @@ $on_mod(Loaded) {
             p1->updateStreak();
             p2->updateStreak();
         }
-    });
+    }).leak();
 }
