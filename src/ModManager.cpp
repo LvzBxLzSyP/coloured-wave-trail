@@ -25,35 +25,35 @@ $on_mod(Loaded) {
     auto mm = ModManager::sharedState();
     mm->load();
     
-    SettingChangedEvent("colour").listen([mm](ccColor3B val) {
-        mm->m_color1 = val;
+    SettingChangedEvent(Mod::get(), "colour").listen([mm](std::string_view key, std::shared_ptr<SettingV3> setting) {
+        mm->m_color1 = Mod::get()->getSettingValue<ccColor3B>("colour");
     }).leak();
     
-    SettingChangedEvent("colour2").listen([mm](ccColor3B val) {
-        mm->m_color2 = val;
+    SettingChangedEvent(Mod::get(), "colour2").listen([mm](std::string_view key, std::shared_ptr<SettingV3> setting) {
+        mm->m_color2 = Mod::get()->getSettingValue<ccColor3B>("colour2");
     }).leak();
     
-    SettingChangedEvent("colour1Enabled").listen([mm](bool val) {
-        mm->m_color1Enabled = val;
+    SettingChangedEvent(Mod::get(), "colour1Enabled").listen([mm](std::string_view key, std::shared_ptr<SettingV3> setting) {
+        mm->m_color1Enabled = Mod::get()->getSettingValue<bool>("colour1Enabled");
     }).leak();
     
-    SettingChangedEvent("colour2Enabled").listen([mm](bool val) {
-        mm->m_color2Enabled = val;
+    SettingChangedEvent(Mod::get(), "colour2Enabled").listen([mm](std::string_view key, std::shared_ptr<SettingV3> setting) {
+        mm->m_color2Enabled = Mod::get()->getSettingValue<bool>("colour2Enabled");
     }).leak();
     
-    SettingChangedEvent("noWave").listen([mm](bool val) {
-        mm->m_noWave = val;
+    SettingChangedEvent(Mod::get(), "noWave").listen([mm](std::string_view key, std::shared_ptr<SettingV3> setting) {
+        mm->m_noWave = Mod::get()->getSettingValue<bool>("noWave");
     }).leak();
     
-    SettingChangedEvent("noDefaultTrail").listen([mm](bool val) {
-        mm->m_noDefaultTrail = val;
+    SettingChangedEvent(Mod::get(), "noDefaultTrail").listen([mm](std::string_view key, std::shared_ptr<SettingV3> setting) {
+        mm->m_noDefaultTrail = Mod::get()->getSettingValue<bool>("noDefaultTrail");
     }).leak();
     
-    SettingChangedEvent("solid").listen([mm](bool val) {
-        mm->m_solid = val;
+    SettingChangedEvent(Mod::get(), "solid").listen([mm](std::string_view key, std::shared_ptr<SettingV3> setting) {
+        mm->m_solid = Mod::get()->getSettingValue<bool>("solid");
     }).leak();
 
-    listenForAllSettingChanges([](std::shared_ptr<SettingV3> setting) {
+    SettingChangedEvent(Mod::get()).listen([mm](std::string_view key, std::shared_ptr<SettingV3> setting) {
         if(!PlayLayer::get())
             return;
 
@@ -64,5 +64,5 @@ $on_mod(Loaded) {
             p1->updateStreak();
             p2->updateStreak();
         }
-    });
+    }).leak();
 }
