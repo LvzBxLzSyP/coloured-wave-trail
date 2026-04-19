@@ -24,7 +24,8 @@ $on_mod(Loaded) {
     auto mm = ModManager::sharedState();
     mm->load();
     
-    // 個別設定監聽：當特定 Key 改變時更新 ModManager 的緩存值
+    // 1. 個別設定監聽：更新緩存值
+    // 在 V3 中，SettingChangedEvent 必須有兩個參數：Mod 和 Key
     
     SettingChangedEvent(Mod::get(), "colour").listen([mm](auto setting) {
         mm->m_color1 = Mod::get()->getSettingValue<ccColor3B>("colour");
@@ -54,9 +55,10 @@ $on_mod(Loaded) {
         mm->m_solid = Mod::get()->getSettingValue<bool>("solid");
     }).leak();
 
-    // 全域設定監聽：當該 Mod 的「任何」設定改變時，立即更新遊戲內的玩家拖尾效果
-    // 注意：在 V3 中，SettingChangedEvent(Mod*) 是監聽全域變動的正確方式
-    SettingChangedEvent(Mod::get()).listen([mm](auto setting) {
+    // 2. 全域設定監聽：處理拖尾更新
+    // 修正：listenForSettingChanges 的第一個參數傳入空字串 "" 
+    // 這代表監聽該 Mod 下「任何」Key 的變動。
+    listenForSettingChanges("", [mm](auto setting) {
         if(!PlayLayer::get())
             return;
 
@@ -67,5 +69,5 @@ $on_mod(Loaded) {
             p1->updateStreak();
             p2->updateStreak();
         }
-    }).leak();
+    });
 }
